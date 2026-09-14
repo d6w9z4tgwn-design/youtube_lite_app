@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="検索・おすすめ・登録チャンネル・履歴を端末内で管理できるローカル動画アプリ">
+  <title>ClipNest — 自分だけの動画ホーム</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/app-layout.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand-area">
+    <button id="menuToggle" class="nav-menu" type="button" aria-label="サイドバーを折りたたむ" aria-expanded="true" aria-controls="libraryNav"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+    <button id="brand" class="brand" type="button" aria-label="ClipNest ホーム">
+      <span class="brand-mark" aria-hidden="true">▶</span>
+      <span>ClipNest</span>
+      <small>LOCAL</small>
+    </button>
+    </div>
+    <div class="search-wrap">
+      <form id="searchForm" class="search-form" autocomplete="off">
+        <input id="searchInput" type="search" maxlength="200" placeholder="検索、またはYouTube URL" aria-label="動画を検索" role="combobox" aria-autocomplete="list" aria-controls="suggestions" aria-expanded="false">
+        <button type="submit">検索</button>
+      </form>
+      <div id="suggestions" class="suggestions" role="listbox" aria-label="検索候補" hidden></div>
+    </div>
+    <div class="topbar-actions">
+      <button id="settingsButton" class="ghost" type="button" aria-haspopup="dialog">設定</button>
+      <button id="modulesButton" class="ghost" type="button" aria-haspopup="dialog">機能</button>
+      <button id="statusButton" class="ghost status-trigger" type="button" aria-haspopup="dialog"><span aria-hidden="true"></span>状態</button>
+    </div>
+  </header>
+
+  <nav id="libraryNav" class="tabs" aria-label="ライブラリの表示">
+    <button class="tab is-active" data-view="home" type="button" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v11h-6v-7H9v7H3Z"/></svg><span>ホーム</span></button>
+    <button class="tab" data-view="subscriptions" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10M4 6h16M3 9h18v12H3Z"/><path d="m10 12 5 3-5 3Z"/></svg><span>登録チャンネル</span></button>
+    <button class="tab" data-view="history" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11a9 9 0 1 1 2 7M3 4v7h7m2-5v7l4 2"/></svg><span>再生履歴</span></button>
+    <div class="nav-note"><strong>あなたのライブラリ</strong><p>好きな動画も、聴きたい音も。<br>この端末に、自分だけのホーム。</p><small>ClipNest · ローカルプレーヤー<br>YouTube非公式アプリ</small></div>
+  </nav>
+
+  <main class="main">
+    <div class="library-entry"><button id="libraryButton" class="ghost" type="button">▤ マイライブラリ・後で見る</button><span>再生ショートカット：J / K / L</span></div>
+    <div class="topic-bar" aria-label="トピックを検索">
+      <button type="button" id="allTopics" class="topic-chip">すべて</button>
+      <button type="button" class="topic-chip" data-query="音楽">音楽</button>
+      <button type="button" class="topic-chip" data-query="ゲーム">ゲーム</button>
+      <button type="button" class="topic-chip" data-query="ポッドキャスト">ポッドキャスト</button>
+      <button type="button" class="topic-chip" data-query="プログラミング">プログラミング</button>
+      <button type="button" class="topic-chip" data-query="料理">料理</button>
+      <button type="button" class="topic-chip" data-query="旅行">旅行</button>
+      <button type="button" class="topic-chip" data-query="ニュース">ニュース</button>
+      <button type="button" class="topic-chip" data-query="ライブ配信">ライブ配信</button>
+    </div>
+    <section class="section-head">
+      <div>
+        <p id="eyebrow" class="eyebrow">HOME</p>
+        <h1 id="pageTitle">あなたへのおすすめ</h1>
+        <p id="pageDescription" class="page-description">視聴・検索の傾向を優先し、登録チャンネルは控えめに反映します。</p>
+      </div>
+      <div class="section-tools">
+        <span id="itemCount" class="item-count"></span>
+        <div id="sectionActions"></div>
+      </div>
+    </section>
+    <div id="message" class="message" hidden></div>
+    <section id="channelProfile" class="channel-profile" aria-labelledby="pageTitle" hidden>
+      <div class="channel-profile-main">
+        <div class="channel-profile-avatar" aria-hidden="true">
+          <img id="channelProfileImage" alt="" hidden>
+          <span id="channelProfileInitial">C</span>
+        </div>
+        <div class="channel-profile-copy">
+          <p id="channelHandle" class="channel-handle"></p>
+          <div id="channelStats" class="channel-stats"></div>
+          <p id="channelDescription" class="channel-description"></p>
+        </div>
+        <div class="channel-profile-actions">
+          <button id="channelSubscribe" class="subscribe channel-subscribe" type="button"></button>
+          <a id="channelOfficialLink" class="ghost link-button" target="_blank" rel="noreferrer">YouTubeで見る</a>
+        </div>
+      </div>
+    </section>
+    <section id="subscribedChannels" class="channel-shelf" aria-labelledby="channelShelfTitle" hidden>
+      <div class="channel-shelf-head">
+        <h2 id="channelShelfTitle">登録中のチャンネル</h2>
+        <span id="channelCount"></span>
+      </div>
+      <div id="channelList" class="channel-list"></div>
+    </section>
+    <div id="content" class="grid" aria-live="polite" aria-busy="false"></div>
+    <div id="homeMore" hidden>
+      <button id="loadMoreHome" class="ghost" type="button">おすすめを追加</button>
+      <span id="homeMoreStatus" role="status"></span>
+    </div>
+  </main>
+
+  <aside id="playerShell" class="player-shell" hidden>
+    <button id="playerSettingsToggle" class="ghost player-settings-toggle" type="button" aria-expanded="false" aria-controls="playerTools">再生設定</button>
+    <button id="closePlayer" class="player-close" type="button" aria-label="プレーヤーを閉じる">×</button>
+    <div class="player-meta">
+      <img id="playerThumb" alt="" width="64" height="64">
+      <div class="player-copy">
+        <strong id="playerTitle">未選択</strong>
+        <span id="playerChannel"></span>
+        <small id="playerStatus" class="player-status" role="status" aria-live="polite"></small>
+      </div>
+    </div>
+
+    <div class="player-center">
+      <audio id="audio" preload="metadata"></audio>
+      <div class="transport">
+        <button id="back5" class="icon-button" type="button" aria-label="5秒戻る">−5</button>
+        <button id="playPause" class="play-button" type="button" aria-label="再生">▶</button>
+        <button id="forward5" class="icon-button" type="button" aria-label="5秒進む">+5</button>
+      </div>
+      <div class="timeline">
+        <span id="currentTime">0:00</span>
+        <input id="seek" type="range" min="0" max="1000" value="0" aria-label="再生位置">
+        <span id="duration">0:00</span>
+      </div>
+    </div>
+
+    <div id="playerTools" class="player-tools">
+      <label>速度
+        <select id="rate">
+          <option value="0.75">0.75×</option>
+          <option value="1" selected>1.00×</option>
+          <option value="1.25">1.25×</option>
+          <option value="1.5">1.50×</option>
+          <option value="2">2.00×</option>
+        </select>
+      </label>
+      <label>音量
+        <input id="volume" type="range" min="0" max="3" step="0.01" value="0.8" aria-label="音量" aria-describedby="volumeValue">
+        <output id="volumeValue" for="volume">80%</output>
+      </label>
+      <button id="loopButton" class="ghost" type="button">リピート OFF</button>
+      <button id="reloadMedia" class="ghost reload-media" type="button" hidden>再読み込み</button>
+      <button id="upNextButton" class="ghost" type="button" aria-haspopup="dialog" disabled>次の候補</button>
+      <button id="autoplayButton" class="ghost" type="button" aria-pressed="true" title="キューを優先し、空なら関連候補を自動再生します">自動再生 ON</button>
+      <button id="watchButton" class="ghost" type="button">再生画面</button>
+      <div id="standardPlayerTools" class="module-rack" aria-label="標準プレーヤー機能"></div>
+      <div id="moduleRack" class="module-rack" aria-label="追加機能"></div>
+      <a id="officialLink" class="ghost link-button" target="_blank" rel="noreferrer">YouTubeで開く</a>
+    </div>
+  </aside>
+
+  <dialog id="modulesDialog">
+    <div class="dialog-head">
+      <div>
+        <p class="eyebrow">MODULES</p>
+        <h2>追加機能</h2>
+      </div>
+      <button id="closeModules" class="ghost" type="button" aria-label="追加機能を閉じる">閉じる</button>
+    </div>
+    <p class="dialog-note">使いたい追加機能を有効にし、「設定を開く」から調整できます。A-Bリピート・音量・再生キューは標準機能なので、ここでの有効化は不要です。</p>
+    <div id="moduleList" class="module-manager-list"></div>
+  </dialog>
+
+  <dialog id="settingsDialog" class="settings-dialog">
+    <div class="dialog-head"><div><p class="eyebrow">SETTINGS</p><h2>アプリ設定</h2></div><button id="closeSettings" class="ghost" type="button">閉じる</button></div>
+    <form id="settingsForm" class="settings-form">
+      <label for="defaultRate">起動時の再生速度</label>
+      <select id="defaultRate"><option value="0.5">0.50×</option><option value="0.75">0.75×</option><option value="1">1.00×</option><option value="1.25">1.25×</option><option value="1.5">1.50×</option><option value="2">2.00×</option></select>
+      <button id="settingsSave" class="ghost" type="submit">設定を保存・速度を反映</button>
+    </form>
+    <p id="settingsMessage" class="settings-result" role="status" aria-live="polite"></p>
+    <section class="settings-section"><h3>依存関係・不具合の報告</h3>
+      <div class="settings-actions"><button id="checkDependencies" class="ghost" type="button">動作環境を確認</button><button id="saveDiagnostics" class="ghost" type="button">診断情報を保存</button></div>
+      <pre id="dependencyResult" class="settings-result"></pre>
+      <p class="dialog-note">診断ファイルには履歴・検索語・保存先・生ログを含めません。外部への自動送信はありません。</p>
+    </section>
+    <section class="settings-section"><h3>yt-dlp の更新</h3>
+      <p class="dialog-note">検索・再生に失敗する場合は動作環境とバージョンを確認してください。更新は公式GitHubの安定版を取得し、SHA-256を照合します（署名検証ではありません）。反映にはアプリの終了・再起動が必要です。</p>
+      <div class="settings-actions"><button id="updateYtdlp" class="ghost" type="button">yt-dlpを更新</button><button id="resetYtdlp" class="ghost" type="button">元の版に戻す</button></div>
+      <p id="ytdlpUpdateMessage" class="settings-result" role="status" aria-live="polite"></p>
+    </section>
+    <details class="settings-section"><summary>保存先と終了方法</summary><p id="dataDirectory" class="settings-result"></p>
+      <p class="dialog-note">履歴・登録はSQLite、上の設定はsettings.jsonに保存します。プレイリスト・音声加工などはブラウザのサイトデータに保存されます。同じブラウザ・同じポートを使い、サイトデータを消さないでください。ブラウザを閉じただけではアプリは終了しません。</p>
+      <button id="quitApp" class="ghost" type="button" hidden>ClipNestを終了</button>
+    </details>
+  </dialog>
+
+  <dialog id="statusDialog">
+    <div class="dialog-head">
+      <h2>ClipNest 状態</h2>
+      <button id="closeStatus" class="ghost" type="button" aria-label="状態を閉じる">閉じる</button>
+    </div>
+    <pre id="statusText">読み込み中…</pre>
+    <details>
+      <summary>詳細：再生・シーク診断</summary>
+      <pre id="playbackDiagnostics"></pre>
+      <p class="dialog-note">直近32件の操作・再生状態を表示します。動画IDや再生位置が含まれるため、共有前に伏せてください。外部への自動送信はありません。通常の不具合報告には「設定 → 診断情報を保存」を使用できます。</p>
+    </details>
+  </dialog>
+
+  <dialog id="upNextDialog" class="up-next-dialog">
+    <div class="dialog-head">
+      <div>
+        <p class="eyebrow">UP NEXT</p>
+        <h2>次の候補</h2>
+      </div>
+      <button id="retryUpNext" class="ghost" type="button">再取得</button>
+      <button id="closeUpNext" class="ghost" type="button" aria-label="次の候補を閉じる">閉じる</button>
+    </div>
+    <p class="dialog-note">動画ページの関連候補です。登録・同じチャンネルでの加点はしません。音楽動画は音楽表示のある候補に絞ります。細かなジャンルの一致までは保証できません。</p>
+    <div id="upNextList" class="up-next-list"></div>
+  </dialog>
+
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

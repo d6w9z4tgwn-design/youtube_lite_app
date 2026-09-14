@@ -1,0 +1,39 @@
+name: 不具合の報告
+description: 再生・検索・起動などの問題
+title: '[Bug] '
+body:
+  - type: markdown
+    attributes:
+      value: '履歴DB、cookies、字幕、ログ全文、個人名を投稿しないでください。設定 → 診断情報を保存 の内容を確認して添付できます。'
+  - type: input
+    id: version
+    attributes:
+      label: ClipNestのバージョン・通常版／Voice版
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: OS・CPU・ブラウザ
+      placeholder: macOS / Apple Silicon / Safari
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 再現手順・期待した動作・実際の動作
+    validations:
+      required: true
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: 診断情報・表示されたエラーコード
+      description: 共有してよい内容か確認してください。限定公開動画のURLは不要です。
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: 確認事項
+      options:
+        - label: yt-dlpのバージョンと依存関係を設定画面で確認した
+        - label: 個人情報や非公開のデータが含まれていないことを確認した
+          required: true
