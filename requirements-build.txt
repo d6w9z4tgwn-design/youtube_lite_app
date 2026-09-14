@@ -1,0 +1,13 @@
+# Use a fresh Python 3.11 venv. Runtime snapshot for v2.5.0 releases.
+# Only the dependencies needed for ClipNest's extraction/streaming are bundled;
+# GPL-licensed optional mutagen and external FFmpeg are not bundled.
+yt-dlp==2026.8.19
+yt-dlp-ejs==0.8.0
+certifi==2026.7.22
+pyinstaller==6.22.2
+pyinstaller-hooks-contrib==2026.7
+packaging==26.3
+altgraph==0.17.5
+macholib==1.16.4; sys_platform == 'darwin'
+pefile==2024.8.26; sys_platform == 'win32'
+pywin32-ctypes==0.2.3; sys_platform == 'win32'
