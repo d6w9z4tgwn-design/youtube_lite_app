@@ -1,5 +1,5 @@
 # Optional, isolated Python 3.11 environment; do not install into the app runtime.
-torch==2.8.0
+torch==2.14.0
 torchaudio==2.8.0
 numpy==1.26.4
 scipy==1.15.3
